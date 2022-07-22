@@ -2,6 +2,8 @@ import request from 'supertest';
 import { app } from '../index';
 import fsExists from 'fs.promises.exists';
 import express from 'express';
+import path from 'path';
+import sharp from 'sharp';
 
 //testing end point
 
@@ -20,13 +22,9 @@ describe('Testing creating the directory function', () => {
     });
 });
 
-//testing proceessing the image
+//testing if processing image is done
 
-/*i coppied the whole fuction of the processing here you can see
- the orignal in the processing.controller,ts file
- */
-
-describe('Testing processing the image', () => {
+describe('Testing if processing image is done', () => {
     it('expect the output directory to have a new processed image', async () => {
         //self invoke because it require params while invoking :D
         (async function testingProcessing(req: express.Request): Promise<void> {
@@ -38,6 +36,35 @@ describe('Testing processing the image', () => {
                     `images/output/${req.query.imageName}_${width}_${height}.jpg`
                 )
             ).toBe(true);
+        });
+    });
+});
+
+//testing if the processing process outputs correctly
+describe('Testing processing the image works well', () => {
+    it('expect the image processed to have 200px width and 300px height', async () => {
+        //self invoke because it require params while invoking :D
+        (async function testingProcessing(req: express.Request): Promise<void> {
+            const imgLocation =
+                path.resolve('./') + `/images/${req.query.imageName}.jpg`;
+            const width = 200;
+            const height = 300;
+            let imgOutLocation;
+
+            await sharp(imgLocation)
+                .resize(width, height)
+                .toFile(
+                    `images/output/${req.query.imageName}_${width}_${height}.jpg`
+                )
+                .then(() => {
+                    imgOutLocation =
+                        path.resolve('./') +
+                        `/images/output/${req.query.imageName}_${width}_${height}.jpg`;
+                    expect(imgOutLocation).toEqual(
+                        path.resolve('./') +
+                            `/images/output/${req.query.imageName}_200_300.jpg`
+                    );
+                });
         });
     });
 });

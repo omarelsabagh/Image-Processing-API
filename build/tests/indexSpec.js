@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
 const index_1 = require("../index");
 const fs_promises_exists_1 = __importDefault(require("fs.promises.exists"));
+const path_1 = __importDefault(require("path"));
+const sharp_1 = __importDefault(require("sharp"));
 //testing end point
 describe('Testing the endpont of the API', () => {
     it('expect respnse status code to equal 200', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -28,11 +30,8 @@ describe('Testing creating the directory function', () => {
         expect(yield (0, fs_promises_exists_1.default)('images/output')).toBe(true);
     }));
 });
-//testing proceessing the image
-/*i coppied the whole fuction of the processing here you can see
- the orignal in the processing.controller,ts file
- */
-describe('Testing processing the image', () => {
+//testing if processing image is done
+describe('Testing if processing image is done', () => {
     it('expect the output directory to have a new processed image', () => __awaiter(void 0, void 0, void 0, function* () {
         //self invoke because it require params while invoking :D
         (function testingProcessing(req) {
@@ -40,6 +39,30 @@ describe('Testing processing the image', () => {
                 const width = Number(req.query.width);
                 const height = Number(req.query.height);
                 expect(yield (0, fs_promises_exists_1.default)(`images/output/${req.query.imageName}_${width}_${height}.jpg`)).toBe(true);
+            });
+        });
+    }));
+});
+//testing if the processing process outputs correctly
+describe('Testing processing the image works well', () => {
+    it('expect the image processed to have 200px width and 300px height', () => __awaiter(void 0, void 0, void 0, function* () {
+        //self invoke because it require params while invoking :D
+        (function testingProcessing(req) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const imgLocation = path_1.default.resolve('./') + `/images/${req.query.imageName}.jpg`;
+                const width = 200;
+                const height = 300;
+                let imgOutLocation;
+                yield (0, sharp_1.default)(imgLocation)
+                    .resize(width, height)
+                    .toFile(`images/output/${req.query.imageName}_${width}_${height}.jpg`)
+                    .then(() => {
+                    imgOutLocation =
+                        path_1.default.resolve('./') +
+                            `/images/output/${req.query.imageName}_${width}_${height}.jpg`;
+                    expect(imgOutLocation).toEqual(path_1.default.resolve('./') +
+                        `/images/output/${req.query.imageName}_200_300.jpg`);
+                });
             });
         });
     }));
