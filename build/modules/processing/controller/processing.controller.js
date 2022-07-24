@@ -50,7 +50,15 @@ function validationAndProcessing(req, res) {
                     }
                     else {
                         //if not already processed process the image with sharp
-                        (0, sharpFunction_1.usingSharp)(req, res);
+                        yield (0, sharpFunction_1.usingSharp)(req.query.imageName, width, height)
+                            //then send the image in the response
+                            .then(() => {
+                            res.status(200).sendFile(path_1.default.resolve('./') +
+                                `/images/output/${req.query.imageName}_${Number(width)}_${Number(height)}.jpg`);
+                        })
+                            .catch((err) => {
+                            res.json(err);
+                        });
                     }
                 }
             }

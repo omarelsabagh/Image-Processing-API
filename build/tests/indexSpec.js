@@ -15,8 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
 const index_1 = require("../index");
 const fs_promises_exists_1 = __importDefault(require("fs.promises.exists"));
-const path_1 = __importDefault(require("path"));
-const sharp_1 = __importDefault(require("sharp"));
+const sharpFunction_1 = require("../modules/utilities/sharpFunction");
 //testing end point
 describe('Testing the endpont of the API', () => {
     it('expect respnse status code to equal 200', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -44,26 +43,10 @@ describe('Testing if processing image is done', () => {
     }));
 });
 //testing if the processing process outputs correctly
-describe('Testing processing the image works well', () => {
-    it('expect the image processed to have 200px width and 300px height', () => __awaiter(void 0, void 0, void 0, function* () {
-        //self invoke because it require params while invoking :D
-        (function testingProcessing(req) {
-            return __awaiter(this, void 0, void 0, function* () {
-                const imgLocation = path_1.default.resolve('./') + `/images/${req.query.imageName}.jpg`;
-                const width = 200;
-                const height = 300;
-                let imgOutLocation;
-                yield (0, sharp_1.default)(imgLocation)
-                    .resize(width, height)
-                    .toFile(`images/output/${req.query.imageName}_${width}_${height}.jpg`)
-                    .then(() => {
-                    imgOutLocation =
-                        path_1.default.resolve('./') +
-                            `/images/output/${req.query.imageName}_${width}_${height}.jpg`;
-                    expect(imgOutLocation).toEqual(path_1.default.resolve('./') +
-                        `/images/output/${req.query.imageName}_200_300.jpg`);
-                });
-            });
-        });
-    }));
-});
+describe('Testing processing the image works well', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('expect the function to throw an error', () => {
+        expect(() => __awaiter(void 0, void 0, void 0, function* () {
+            yield (0, sharpFunction_1.usingSharp)('fjord', 111, 111);
+        })).not.toThrow(new Error());
+    });
+}));

@@ -15,20 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.usingSharp = void 0;
 const path_1 = __importDefault(require("path"));
 const sharp_1 = __importDefault(require("sharp"));
-function usingSharp(req, res) {
+function usingSharp(imagename, width, height) {
     return __awaiter(this, void 0, void 0, function* () {
-        const imgLocation = path_1.default.resolve('./') + `/images/${req.query.imageName}.jpg`;
-        const width = Number(req.query.width);
-        const height = Number(req.query.height);
-        let imgOutLocation;
-        yield (0, sharp_1.default)(imgLocation)
-            .resize(width, height)
-            .toFile(`images/output/${req.query.imageName}_${width}_${height}.jpg`)
-            .then(() => {
-            imgOutLocation =
-                path_1.default.resolve('./') +
-                    `/images/output/${req.query.imageName}_${width}_${height}.jpg`;
-            res.status(200).sendFile(imgOutLocation);
+        yield (0, sharp_1.default)(path_1.default.resolve('./') + `/images/${imagename}.jpg`)
+            .resize(Number(width), Number(height))
+            .toFile(`images/output/${imagename}_${Number(width)}_${Number(height)}.jpg`)
+            .catch((err) => {
+            Promise.reject(new Error(err));
         });
     });
 }
